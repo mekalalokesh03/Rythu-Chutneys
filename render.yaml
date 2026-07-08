@@ -32,7 +32,7 @@ services:
   - type: static
     name: rythu-chutneys
     buildCommand: npm run install:all && npm run build:client
-    publishPath: client/dist
+    publishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://rythu-chutneys-backend.onrender.com

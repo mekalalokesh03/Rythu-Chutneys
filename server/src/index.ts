@@ -28,7 +28,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/delivery', deliveryRoutes);
 
 // Serve frontend static files
-const clientDistPath = path.join(__dirname, '../../client/dist');
+const clientDistPath = path.join(__dirname, '../../dist');
 app.use(express.static(clientDistPath));
 
 // Health check endpoint
