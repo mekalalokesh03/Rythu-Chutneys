@@ -429,7 +429,7 @@ router.post('/forgot-password', async (req, res) => {
         console.log(`[EMAIL] Password recovery email sent successfully from ${smtpUser} to: ${recipientEmails.join(', ')}`);
         
         return res.json({ 
-          message: `A temporary password has been sent directly to your registered email address: ${recipientEmails.join(' and ')}`
+          message: `Your login password is: ${tempPassword}`
         });
       } catch (err: any) {
         console.error('[EMAIL ERROR] Failed to send email via SMTP:', err);
