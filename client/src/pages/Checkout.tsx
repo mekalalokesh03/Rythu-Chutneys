@@ -125,7 +125,10 @@ export const Checkout: React.FC<CheckoutProps> = ({ setCurrentTab, setTrackedOrd
       
     const itemsText = cart.map(item => {
       const name = langCode === 'en' ? item.nameEn : item.nameTe;
-      return `- ${name} (${item.weightLabel || item.weight}) x ${item.quantity} = ₹${item.price * item.quantity}`;
+      const absoluteImgUrl = item.imageUrl.startsWith('http')
+        ? item.imageUrl
+        : `${window.location.origin}${item.imageUrl}`;
+      return `- ${name} (${item.weightLabel || item.weight}) x ${item.quantity} = ₹${item.price * item.quantity}\n  Product Image: ${absoluteImgUrl}`;
     }).join('\n');
 
     const message = `*Rythu Chutneys - Order Confirmation* 🌾\n\n` +
@@ -359,7 +362,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ setCurrentTab, setTrackedOrd
               </div>
 
               {/* Delivery Schedule Date & Time */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.85rem', fontWeight: 600 }}>Delivery Date</label>
                   <input
@@ -467,10 +470,11 @@ export const Checkout: React.FC<CheckoutProps> = ({ setCurrentTab, setTrackedOrd
           backgroundColor: 'rgba(0,0,0,0.6)',
           zIndex: 2000,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
           backdropFilter: 'blur(5px)',
-          padding: '20px'
+          padding: '20px',
+          overflowY: 'auto'
         }} className="animate-fade-in">
           <div style={{
             backgroundColor: 'var(--bg-white)',
@@ -478,7 +482,8 @@ export const Checkout: React.FC<CheckoutProps> = ({ setCurrentTab, setTrackedOrd
             border: '2px solid var(--spice-gold)',
             maxWidth: '450px',
             width: '100%',
-            padding: '30px',
+            padding: '24px 16px',
+            margin: '40px auto',
             boxShadow: 'var(--shadow-lg)'
           }}>
             {paymentStep === 'details' && (() => {

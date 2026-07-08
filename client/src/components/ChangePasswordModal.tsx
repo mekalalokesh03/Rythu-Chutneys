@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth, API_BASE_URL } from '../context/AuthContext';
-import { X, Lock, Loader2 } from 'lucide-react';
+import { X, Lock, Loader2, User } from 'lucide-react';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -8,17 +8,72 @@ interface ChangePasswordModalProps {
 }
 
 export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose }) => {
-  const { token } = useAuth();
+  const { token, user, updateUser } = useAuth();
+  const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
+
+  // Profile fields
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+
+  // Password fields
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // Sync profile details when user is loaded or modal opens
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setPhone(user.phone || '');
+    }
+  }, [user, isOpen]);
+
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    if (!name.trim()) {
+      setErrorMsg('Name is required');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, phone })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update profile');
+      }
+
+      // Update the user details in AuthContext
+      updateUser(data.user);
+      setSuccessMsg('Profile updated successfully!');
+      setTimeout(() => {
+        setSuccessMsg(null);
+      }, 2000);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Error occurred.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -66,10 +121,11 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
       backgroundColor: 'rgba(0,0,0,0.6)',
       zIndex: 2000,
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       backdropFilter: 'blur(5px)',
-      padding: '20px'
+      padding: '20px',
+      overflowY: 'auto'
     }} className="animate-fade-in" onClick={onClose}>
       
       <div style={{
@@ -78,7 +134,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
         border: '1px solid var(--border-color)',
         maxWidth: '450px',
         width: '100%',
-        padding: '30px',
+        padding: '24px 16px',
+        margin: '40px auto',
         position: 'relative',
         boxShadow: 'var(--shadow-lg)'
       }} onClick={(e) => e.stopPropagation()}>
@@ -103,11 +160,52 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
           fontFamily: 'var(--font-serif)',
           fontSize: '1.6rem',
           color: 'var(--chilli-red)',
-          marginBottom: '20px',
+          marginBottom: '15px',
           textAlign: 'center'
         }}>
-          Change Password
+          Account Settings
         </h3>
+
+        {/* Tabs Header */}
+        <div style={{
+          display: 'flex',
+          borderBottom: '1px solid var(--border-color)',
+          marginBottom: '20px',
+          gap: '12px'
+        }}>
+          <button
+            onClick={() => { setActiveTab('profile'); setErrorMsg(null); setSuccessMsg(null); }}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              border: 'none',
+              borderBottom: activeTab === 'profile' ? '2px solid var(--chilli-red)' : '2px solid transparent',
+              color: activeTab === 'profile' ? 'var(--chilli-red)' : 'var(--text-dark)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              outline: 'none'
+            }}
+          >
+            Profile Details
+          </button>
+          <button
+            onClick={() => { setActiveTab('password'); setErrorMsg(null); setSuccessMsg(null); }}
+            style={{
+              padding: '8px 16px',
+              background: 'transparent',
+              border: 'none',
+              borderBottom: activeTab === 'password' ? '2px solid var(--chilli-red)' : '2px solid transparent',
+              color: activeTab === 'password' ? 'var(--chilli-red)' : 'var(--text-dark)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              outline: 'none'
+            }}
+          >
+            Change Password
+          </button>
+        </div>
 
         {errorMsg && (
           <div style={{
@@ -138,64 +236,116 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Current Password</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="password"
-                className="form-control"
-                placeholder="••••••••"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                style={{ paddingLeft: '40px', width: '100%' }}
-              />
-              <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+        {activeTab === 'profile' ? (
+          <form onSubmit={handleProfileSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Full Name</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Full Name"
+                  style={{ paddingLeft: '40px', width: '100%' }}
+                />
+                <User size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              </div>
             </div>
-          </div>
 
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>New Password</label>
-            <div style={{ position: 'relative' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Email Address (Read-only)</label>
               <input
-                type="password"
+                type="email"
                 className="form-control"
-                placeholder="••••••••"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                style={{ paddingLeft: '40px', width: '100%' }}
+                value={user?.email || ''}
+                disabled
+                style={{ width: '100%', backgroundColor: 'var(--bg-cream)', color: 'var(--text-muted)', border: '1px solid var(--border-color)', cursor: 'not-allowed' }}
               />
-              <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             </div>
-          </div>
 
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Confirm New Password</label>
-            <div style={{ position: 'relative' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Phone Number</label>
               <input
-                type="password"
+                type="tel"
                 className="form-control"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                style={{ paddingLeft: '40px', width: '100%' }}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. 9876543210"
+                style={{ width: '100%' }}
               />
-              <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             </div>
-          </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={submitting}
-            style={{ padding: '12px', borderRadius: '25px', width: '100%', fontSize: '0.95rem', marginTop: '10px' }}
-          >
-            {submitting ? <Loader2 className="spin-animation" size={18} /> : 'Update Password'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={submitting}
+              style={{ padding: '12px', borderRadius: '25px', width: '100%', fontSize: '0.95rem', marginTop: '10px' }}
+            >
+              {submitting ? <Loader2 className="spin-animation" size={18} /> : 'Save Profile Details'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Current Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="••••••••"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                  style={{ paddingLeft: '40px', width: '100%' }}
+                />
+                <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              </div>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>New Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  style={{ paddingLeft: '40px', width: '100%' }}
+                />
+                <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              </div>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Confirm New Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  style={{ paddingLeft: '40px', width: '100%' }}
+                />
+                <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={submitting}
+              style={{ padding: '12px', borderRadius: '25px', width: '100%', fontSize: '0.95rem', marginTop: '10px' }}
+            >
+              {submitting ? <Loader2 className="spin-animation" size={18} /> : 'Update Password'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -112,6 +112,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
           {/* Language Switcher */}
           <button 
             onClick={() => setLanguage(language === 'en' ? 'te' : 'en')}
+            className="desktop-only"
             style={{ 
               background: 'transparent', 
               border: '1px solid var(--border-color)', 
@@ -132,6 +133,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
           {/* Theme Toggle */}
           <button 
             onClick={toggleTheme}
+            className="desktop-only"
             style={{ 
               background: 'transparent', 
               border: 'none', 
@@ -177,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
 
           {/* User Profile */}
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }} className="desktop-only">
               <span 
                 onClick={openChangePasswordModal}
                 style={{ 
@@ -192,7 +194,6 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
                   alignItems: 'center',
                   gap: '4px'
                 }} 
-                className="desktop-only"
                 title="Change Password"
               >
                 👤 {user.name.split(' ')[0]}
@@ -216,6 +217,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
           ) : (
             <button 
               onClick={openAuthModal}
+              className="desktop-only"
               style={{ 
                 background: 'var(--chilli-red)', 
                 color: 'white', 
@@ -259,29 +261,139 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
           top: 'var(--header-height)',
           left: 0,
           right: 0,
+          bottom: 0, // Fill viewport height for scrolling
           background: 'var(--bg-white)',
-          borderBottom: '1px solid var(--border-color)',
           padding: '24px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px',
-          zIndex: 999
+          gap: '20px',
+          zIndex: 999,
+          overflowY: 'auto'
         }} className="animate-fade-in">
-          <a href="#home" onClick={() => handleNav('home')} style={{ fontSize: '1.2rem', fontWeight: 600 }}>
+          <a href="#home" onClick={() => handleNav('home')} style={{ fontSize: '1.2rem', fontWeight: 600, padding: '4px 0' }}>
             {t('navHome')}
           </a>
-          <a href="#shop" onClick={() => handleNav('shop')} style={{ fontSize: '1.2rem', fontWeight: 600 }}>
+          <a href="#shop" onClick={() => handleNav('shop')} style={{ fontSize: '1.2rem', fontWeight: 600, padding: '4px 0' }}>
             {t('navShop')}
           </a>
           {(!user || user.role !== 'ADMIN') && (
-            <a href="#track" onClick={() => handleNav('track')} style={{ fontSize: '1.2rem', fontWeight: 600 }}>
+            <a href="#track" onClick={() => handleNav('track')} style={{ fontSize: '1.2rem', fontWeight: 600, padding: '4px 0' }}>
               {t('navTrack')}
             </a>
           )}
           {user && user.role === 'ADMIN' && (
-            <a href="#admin" onClick={() => handleNav('admin')} style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--spice-gold-hover)' }}>
+            <a href="#admin" onClick={() => handleNav('admin')} style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--spice-gold-hover)', padding: '4px 0' }}>
               {t('navAdmin')}
             </a>
+          )}
+
+          <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '8px 0' }} />
+
+          {/* Mobile Settings Controls (Theme & Language) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button 
+              onClick={() => { setLanguage(language === 'en' ? 'te' : 'en'); setMobileMenuOpen(false); }}
+              style={{ 
+                background: 'transparent', 
+                border: '1px solid var(--border-color)', 
+                borderRadius: '20px', 
+                padding: '10px 16px', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: 'var(--text-dark)',
+                fontWeight: 600,
+                flexGrow: 1,
+                justifyContent: 'center'
+              }}
+            >
+              <Globe size={16} />
+              <span>{language === 'en' ? 'తెలుగు' : 'English'}</span>
+            </button>
+
+            <button 
+              onClick={() => { toggleTheme(); setMobileMenuOpen(false); }}
+              style={{ 
+                background: 'transparent', 
+                border: '1px solid var(--border-color)', 
+                borderRadius: '20px',
+                padding: '10px 16px',
+                cursor: 'pointer', 
+                color: 'var(--text-dark)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                flexGrow: 1
+              }}
+            >
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              <span>{theme === 'light' ? 'Dark' : 'Light'}</span>
+            </button>
+          </div>
+
+          {/* Mobile Profile Details & Authentication */}
+          {user ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+              <div 
+                onClick={() => { openChangePasswordModal(); setMobileMenuOpen(false); }}
+                style={{ 
+                  fontSize: '1rem', 
+                  fontWeight: 600, 
+                  cursor: 'pointer',
+                  padding: '12px 16px',
+                  borderRadius: '20px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-cream)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  justifyContent: 'center'
+                }} 
+              >
+                👤 {user.name} (Settings)
+              </div>
+              <button 
+                onClick={() => { logout(); setMobileMenuOpen(false); }}
+                style={{ 
+                  background: 'var(--chilli-red-light)', 
+                  color: 'var(--chilli-red)', 
+                  border: '1px solid var(--chilli-red)',
+                  padding: '12px 16px',
+                  borderRadius: '20px',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  width: '100%'
+                }}
+              >
+                {t('logout')}
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => { openAuthModal(); setMobileMenuOpen(false); }}
+              style={{ 
+                background: 'var(--chilli-red)', 
+                color: 'white', 
+                border: 'none',
+                padding: '12px 16px',
+                borderRadius: '20px',
+                fontWeight: 600,
+                fontSize: '1rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginTop: '8px',
+                width: '100%'
+              }}
+            >
+              <User size={16} />
+              <span>{t('login')}</span>
+            </button>
           )}
         </div>
       )}

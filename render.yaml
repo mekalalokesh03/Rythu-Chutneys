@@ -17,6 +17,17 @@ services:
         generateValue: true
       - key: VITE_API_URL
         value: https://rythu-chutneys-backend.onrender.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "465"
+      - key: SMTP_SECURE
+        value: "true"
+      - key: SMTP_USER
+        value: mekalalokesh2005@gmail.com
+      - key: SMTP_PASS
+        sync: false
+
 
 databases:
   # PostgreSQL Database Instance

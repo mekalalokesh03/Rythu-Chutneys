@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import { authenticateToken, requireAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -286,6 +287,39 @@ router.get('/users', requireAdmin, async (req, res) => {
   }
 });
 
+// Update profile details (Authenticated Users)
+router.put('/profile', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { name, phone } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: 'Name is required' });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user?.id },
+      data: {
+        name,
+        phone: phone || null
+      }
+    });
+
+    return res.json({
+      message: 'Profile details updated successfully',
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        phone: updatedUser.phone,
+        role: updatedUser.role
+      }
+    });
+  } catch (error: any) {
+    console.error('Profile update error:', error);
+    return res.status(500).json({ message: 'Server error during profile update' });
+  }
+});
+
 // Change password (Authenticated Users)
 router.put('/change-password', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -348,6 +382,11 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ message: 'User not found with this email/phone' });
     }
 
+    const recipientEmails = users.map(u => u.email).filter((e): e is string => !!e);
+    if (recipientEmails.length === 0) {
+      return res.status(400).json({ message: 'No registered email address found for this account to send the temporary password.' });
+    }
+
     // Generate a temporary password
     const tempPassword = 'Temp' + Math.floor(100000 + Math.random() * 900000);
     const salt = await bcrypt.genSalt(10);
@@ -361,14 +400,18 @@ router.post('/forgot-password', async (req, res) => {
     }
 
     // Send email using nodemailer if process.env.SMTP_PASS is configured, else log to console
+    const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+    const smtpPort = parseInt(process.env.SMTP_PORT || '465');
+    const smtpSecure = process.env.SMTP_SECURE !== 'false';
     const smtpUser = process.env.SMTP_USER || 'mekalalokesh2005@gmail.com';
     const smtpPass = process.env.SMTP_PASS;
 
     if (smtpPass) {
       try {
-        const nodemailer = require('nodemailer');
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
+          host: smtpHost,
+          port: smtpPort,
+          secure: smtpSecure,
           auth: {
             user: smtpUser,
             pass: smtpPass
@@ -377,29 +420,36 @@ router.post('/forgot-password', async (req, res) => {
 
         const mailOptions = {
           from: smtpUser,
-          to: users.map(u => u.email).join(', '),
+          to: recipientEmails.join(', '),
           subject: 'Rythu Chutneys - Password Recovery',
           text: `Hello,\n\nYour password has been reset. Your temporary password to log in is: ${tempPassword}\n\nRegards,\nRythu Chutneys Support`
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`[EMAIL] Password recovery email sent successfully from ${smtpUser} to: ${users.map(u => u.email).join(', ')}`);
+        console.log(`[EMAIL] Password recovery email sent successfully from ${smtpUser} to: ${recipientEmails.join(', ')}`);
+        
+        return res.json({ 
+          message: `A temporary password has been sent directly to your registered email address: ${recipientEmails.join(' and ')}`
+        });
       } catch (err: any) {
-        console.error('[EMAIL ERROR] Failed to send email via SMTP:', err.message);
+        console.error('[EMAIL ERROR] Failed to send email via SMTP:', err);
+        return res.status(500).json({ 
+          message: `Failed to send email directly to your Gmail address. Error: ${err.message || 'SMTP configuration error'}`
+        });
       }
     } else {
       console.log('\n=========================================================');
       console.log(`[EMAIL SIMULATOR - NO SMTP_PASS CONFIGURED]`);
       console.log(`Sent Mail From: ${smtpUser}`);
-      console.log(`To: ${users.map(u => u.email).join(', ')}`);
+      console.log(`To: ${recipientEmails.join(', ')}`);
       console.log('Subject: Rythu Chutneys - Password Recovery');
       console.log(`Message: Hello,\nYour password has been reset. Your temporary password to log in is: ${tempPassword}`);
       console.log('=========================================================\n');
-    }
 
-    return res.json({ 
-      message: `A temporary password has been sent from mekalalokesh2005@gmail.com to ${users.map(u => u.email).join(' and ')} (Simulated). Your login password is: ${tempPassword}`
-    });
+      return res.json({ 
+        message: `Your login password is: ${tempPassword}`
+      });
+    }
   } catch (error: any) {
     console.error('Forgot password error:', error);
     return res.status(500).json({ message: 'Server error during password recovery' });

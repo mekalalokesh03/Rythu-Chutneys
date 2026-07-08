@@ -419,10 +419,11 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
           backgroundColor: 'rgba(0,0,0,0.6)',
           zIndex: 3000,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
           backdropFilter: 'blur(5px)',
-          padding: '20px'
+          padding: 'calc(var(--header-height) + 20px) 20px 20px 20px',
+          overflowY: 'auto'
         }}>
           <div style={{
             backgroundColor: 'var(--bg-white)',
@@ -432,9 +433,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
             width: '100%',
             padding: '30px',
             position: 'relative',
-            boxShadow: 'var(--shadow-lg)',
-            maxHeight: '90vh',
-            overflowY: 'auto'
+            boxShadow: 'var(--shadow-lg)'
           }}>
             <button 
               onClick={() => setShowAddModal(false)}
@@ -448,7 +447,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
             </h3>
 
             <form onSubmit={handleAddProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Name (English)</label>
                   <input type="text" className="form-control" value={nameEn} onChange={(e) => setNameEn(e.target.value)} required />
@@ -459,7 +458,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Description (English)</label>
                   <textarea className="form-control" value={descEn} onChange={(e) => setDescEn(e.target.value)} rows={2} required />
@@ -470,7 +469,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
                 </div>
               </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-3">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Price ({category === 'ROTI' ? '1 Roti' : '250g'})</label>
                   <input type="number" className="form-control" value={price250} onChange={(e) => setPrice250(e.target.value)} required />
@@ -486,7 +485,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
               </div>
 
               {/* Weight Labels configuration */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-3">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>{category === 'ROTI' ? 'Option 1 Label' : 'Weight 1 Label'}</label>
                   <input type="text" className="form-control" value={weight1} onChange={(e) => setWeight1(e.target.value)} required />
@@ -501,7 +500,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Spice Level</label>
                   <select className="form-control" value={spiceLevel} onChange={(e) => setSpiceLevel(e.target.value)}>
@@ -549,10 +548,11 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
           backgroundColor: 'rgba(0,0,0,0.6)',
           zIndex: 3000,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
           backdropFilter: 'blur(5px)',
-          padding: '20px'
+          padding: 'calc(var(--header-height) + 20px) 20px 20px 20px',
+          overflowY: 'auto'
         }}>
           <div style={{
             backgroundColor: 'var(--bg-white)',
@@ -562,9 +562,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
             width: '100%',
             padding: '30px',
             position: 'relative',
-            boxShadow: 'var(--shadow-lg)',
-            maxHeight: '90vh',
-            overflowY: 'auto'
+            boxShadow: 'var(--shadow-lg)'
           }}>
             <button 
               onClick={() => setEditingProduct(null)}
@@ -578,7 +576,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
             </h3>
 
             <form onSubmit={handleEditProductSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Name (English)</label>
                   <input type="text" className="form-control" value={editNameEn} onChange={(e) => setEditNameEn(e.target.value)} required />
@@ -589,7 +587,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Description (English)</label>
                   <textarea className="form-control" value={editDescEn} onChange={(e) => setEditDescEn(e.target.value)} rows={2} required />
@@ -600,7 +598,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-3">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Price ({editCategory === 'ROTI' ? '1 Roti' : '250g'})</label>
                   <input type="number" className="form-control" value={editPrice250} onChange={(e) => setEditPrice250(e.target.value)} required />
@@ -616,7 +614,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
               </div>
 
               {/* Weight Labels configuration */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-3">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>{editCategory === 'ROTI' ? 'Option 1 Label' : 'Weight 1 Label'}</label>
                   <input type="text" className="form-control" value={editWeight1} onChange={(e) => setEditWeight1(e.target.value)} required />
@@ -631,7 +629,7 @@ export const Shop: React.FC<ShopProps> = ({ setSelectedProduct, setCurrentTab })
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="responsive-grid-form-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Spice Level</label>
                   <select className="form-control" value={editSpiceLevel} onChange={(e) => setEditSpiceLevel(e.target.value)}>

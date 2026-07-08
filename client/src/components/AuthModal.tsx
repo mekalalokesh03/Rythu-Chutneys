@@ -77,10 +77,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       backgroundColor: 'rgba(0,0,0,0.6)',
       zIndex: 2000,
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       backdropFilter: 'blur(5px)',
-      padding: '20px'
+      padding: '20px',
+      overflowY: 'auto'
     }} className="animate-fade-in" onClick={onClose}>
       
       {/* Modal Card */}
@@ -90,7 +91,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         border: '1px solid var(--border-color)',
         maxWidth: '450px',
         width: '100%',
-        padding: '30px',
+        padding: '24px 16px',
+        margin: '40px auto',
         position: 'relative',
         boxShadow: 'var(--shadow-lg)'
       }} onClick={(e) => e.stopPropagation()}>

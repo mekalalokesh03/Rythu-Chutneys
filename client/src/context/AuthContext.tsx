@@ -18,6 +18,7 @@ interface AuthContextType {
   loginWithOtp: (token: string, user: User) => void;
   logout: () => void;
   clearError: () => void;
+  updateUser: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -138,6 +139,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -149,7 +154,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         loginWithOtp,
         logout,
-        clearError
+        clearError,
+        updateUser
       }}
     >
       {children}

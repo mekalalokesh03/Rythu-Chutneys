@@ -84,18 +84,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product, setCurren
       </button>
 
       {/* Main Detail Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '50px',
-        backgroundColor: 'var(--bg-white)',
-        border: '1px solid var(--border-color)',
-        borderRadius: '20px',
-        padding: '40px',
-        boxShadow: 'var(--shadow-md)'
-      }}>
+      <div className="product-detail-card">
         {/* Left Side: Product Image */}
-        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '400px', background: '#F0EBE0' }}>
+        <div className="product-detail-image-wrapper">
           <img
             src={product.imageUrl}
             alt={product.nameEn}

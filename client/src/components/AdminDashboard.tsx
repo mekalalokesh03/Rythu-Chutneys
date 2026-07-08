@@ -32,6 +32,11 @@ interface Order {
   items: OrderItem[];
   deliveryDate?: string | null;
   deliveryTimeSlot?: string | null;
+  user?: {
+    name: string;
+    email: string;
+    phone?: string | null;
+  } | null;
 }
 
 
@@ -389,7 +394,7 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* Sub Tabs */}
-      <div style={{ display: 'flex', borderBottom: '2px solid var(--border-color)', gap: '8px', marginBottom: '30px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', borderBottom: '2px solid var(--border-color)', gap: '8px', marginBottom: '30px' }}>
         <button
           onClick={() => setActiveSubTab('orders')}
           style={{
@@ -487,6 +492,11 @@ export const AdminDashboard: React.FC = () => {
                     {new Date(o.createdAt).toLocaleDateString()}
                   </td>
                   <td style={{ padding: '16px', fontSize: '0.85rem', maxWidth: '200px' }}>
+                    {o.user && (
+                      <>
+                        <strong>Customer:</strong> {o.user.name}<br />
+                      </>
+                    )}
                     <strong>Addr:</strong> {o.address}<br />
                     <strong>Ph:</strong> {o.phone}<br />
                     {o.deliveryDate && (

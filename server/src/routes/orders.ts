@@ -202,6 +202,7 @@ router.get('/', requireAdmin, async (req, res) => {
   try {
     const orders = await prisma.order.findMany({
       include: {
+        user: true,
         items: {
           include: {
             product: true
