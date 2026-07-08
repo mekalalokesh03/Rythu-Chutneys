@@ -28,6 +28,14 @@ services:
       - key: SMTP_PASS
         sync: false
 
+  # React Frontend Static Site
+  - type: static
+    name: rythu-chutneys
+    buildCommand: npm run install:all && npm run build:client
+    publishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://rythu-chutneys-backend.onrender.com
 
 databases:
   # PostgreSQL Database Instance
@@ -35,3 +43,4 @@ databases:
     plan: free
     databaseName: rythuchutneys
     user: rythu_admin
+
