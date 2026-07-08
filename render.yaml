@@ -4,8 +4,8 @@ services:
     name: rythu-chutneys-backend
     env: node
     plan: free
-    buildCommand: npm install && npm run build --prefix server
-    startCommand: npm run start --prefix server
+    buildCommand: npm run install:all && npm run build:server
+    startCommand: npm run start
     envVars:
       - key: PORT
         value: 5000
