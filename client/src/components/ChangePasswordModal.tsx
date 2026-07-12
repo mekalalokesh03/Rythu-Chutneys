@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth, API_BASE_URL } from '../context/AuthContext';
-import { X, Lock, Loader2, User } from 'lucide-react';
+import { X, Lock, Loader2, User, Eye, EyeOff } from 'lucide-react';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -24,11 +24,20 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   // Sync profile details when user is loaded or modal opens
   useEffect(() => {
     if (user) {
       setName(user.name || '');
       setPhone(user.phone || '');
+    }
+    if (!isOpen) {
+      setShowCurrent(false);
+      setShowNew(false);
+      setShowConfirm(false);
     }
   }, [user, isOpen]);
 
@@ -174,7 +183,14 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
           gap: '12px'
         }}>
           <button
-            onClick={() => { setActiveTab('profile'); setErrorMsg(null); setSuccessMsg(null); }}
+            onClick={() => { 
+              setActiveTab('profile'); 
+              setErrorMsg(null); 
+              setSuccessMsg(null); 
+              setShowCurrent(false);
+              setShowNew(false);
+              setShowConfirm(false);
+            }}
             style={{
               padding: '8px 16px',
               background: 'transparent',
@@ -190,7 +206,14 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
             Profile Details
           </button>
           <button
-            onClick={() => { setActiveTab('password'); setErrorMsg(null); setSuccessMsg(null); }}
+            onClick={() => { 
+              setActiveTab('password'); 
+              setErrorMsg(null); 
+              setSuccessMsg(null); 
+              setShowCurrent(false);
+              setShowNew(false);
+              setShowConfirm(false);
+            }}
             style={{
               padding: '8px 16px',
               background: 'transparent',
@@ -292,15 +315,36 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
               <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Current Password</label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type="password"
+                  type={showCurrent ? "text" : "password"}
                   className="form-control"
                   placeholder="••••••••"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
-                  style={{ paddingLeft: '40px', width: '100%' }}
+                  style={{ paddingLeft: '40px', paddingRight: '40px', width: '100%' }}
                 />
                 <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrent(!showCurrent)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-muted)',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  tabIndex={-1}
+                >
+                  {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 
@@ -308,15 +352,36 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
               <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>New Password</label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type="password"
+                  type={showNew ? "text" : "password"}
                   className="form-control"
                   placeholder="••••••••"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
-                  style={{ paddingLeft: '40px', width: '100%' }}
+                  style={{ paddingLeft: '40px', paddingRight: '40px', width: '100%' }}
                 />
                 <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <button
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-muted)',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  tabIndex={-1}
+                >
+                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 
@@ -324,15 +389,36 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen
               <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Confirm New Password</label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type="password"
+                  type={showConfirm ? "text" : "password"}
                   className="form-control"
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  style={{ paddingLeft: '40px', width: '100%' }}
+                  style={{ paddingLeft: '40px', paddingRight: '40px', width: '100%' }}
                 />
                 <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-muted)',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  tabIndex={-1}
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 

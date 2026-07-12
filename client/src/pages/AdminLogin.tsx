@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth, API_BASE_URL } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Lock, Mail, KeyRound, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, KeyRound, Loader2, ArrowLeft, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 interface AdminLoginProps {
   setCurrentTab: (tab: string) => void;
@@ -14,6 +14,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setCurrentTab }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
@@ -145,15 +146,36 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setCurrentTab }) => {
             <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Security Password</label>
             <div style={{ position: 'relative' }}>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{ paddingLeft: '40px', width: '100%' }}
+                style={{ paddingLeft: '40px', paddingRight: '40px', width: '100%' }}
               />
               <KeyRound size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
           </div>
 

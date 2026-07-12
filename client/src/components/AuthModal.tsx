@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth, API_BASE_URL } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { X, Lock, Mail, User, Phone, Loader2 } from 'lucide-react';
+import { X, Lock, Mail, User, Phone, Loader2, Eye, EyeOff } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -18,12 +18,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen) return null;
 
   const handleTabChange = (isLogin: boolean) => {
     setIsLoginTab(isLogin);
     clearError();
+    setShowPassword(false);
   };
 
   const handleForgotPassword = async () => {
@@ -66,6 +68,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       setPassword('');
       setName('');
       setPhone('');
+      setShowPassword(false);
       onClose();
     }
   };
@@ -226,15 +229,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Password</label>
             <div style={{ position: 'relative' }}>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{ paddingLeft: '40px' }}
+                style={{ paddingLeft: '40px', paddingRight: '40px' }}
               />
               <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

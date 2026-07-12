@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ShoppingCart, User, Globe, Moon, Sun, Menu, X, ShieldAlert } from 'lucide-react';
+import { ShoppingCart, User, Globe, Moon, Sun, Menu, X, ShieldAlert, Home as HomeIcon, ShoppingBag, Package } from 'lucide-react';
 
 interface HeaderProps {
   currentTab: string;
@@ -41,13 +41,13 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
 
   return (
     <header className="header-glass" style={{ display: 'flex', alignItems: 'center' }}>
-      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
         {/* Brand Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
-          <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--chilli-red)', fontFamily: 'var(--font-serif)' }}>
+          <span className="logo-text" style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--chilli-red)', fontFamily: 'var(--font-serif)', whiteSpace: 'nowrap' }}>
             🌾 Rythu Chutneys
           </span>
-          <span style={{ 
+          <span className="premium-badge" style={{ 
             fontSize: '0.75rem', 
             background: 'var(--spice-gold-light)', 
             color: 'var(--spice-gold-hover)', 
@@ -55,7 +55,8 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
             borderRadius: '4px',
             border: '1px solid var(--spice-gold)',
             fontWeight: 600,
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap'
           }}>
             Premium
           </span>
@@ -270,20 +271,84 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
           zIndex: 999,
           overflowY: 'auto'
         }} className="animate-fade-in">
-          <a href="#home" onClick={() => handleNav('home')} style={{ fontSize: '1.2rem', fontWeight: 600, padding: '4px 0' }}>
-            {t('navHome')}
+          <a 
+            href="#home" 
+            onClick={() => handleNav('home')} 
+            style={{ 
+              fontSize: '1.1rem', 
+              fontWeight: 600, 
+              padding: '12px 16px', 
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              backgroundColor: currentTab === 'home' ? 'var(--chilli-red-light)' : 'transparent',
+              color: currentTab === 'home' ? 'var(--chilli-red)' : 'var(--text-dark)',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <HomeIcon size={20} />
+            <span>{t('navHome')}</span>
           </a>
-          <a href="#shop" onClick={() => handleNav('shop')} style={{ fontSize: '1.2rem', fontWeight: 600, padding: '4px 0' }}>
-            {t('navShop')}
+          <a 
+            href="#shop" 
+            onClick={() => handleNav('shop')} 
+            style={{ 
+              fontSize: '1.1rem', 
+              fontWeight: 600, 
+              padding: '12px 16px', 
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              backgroundColor: currentTab === 'shop' ? 'var(--chilli-red-light)' : 'transparent',
+              color: currentTab === 'shop' ? 'var(--chilli-red)' : 'var(--text-dark)',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <ShoppingBag size={20} />
+            <span>{t('navShop')}</span>
           </a>
           {(!user || user.role !== 'ADMIN') && (
-            <a href="#track" onClick={() => handleNav('track')} style={{ fontSize: '1.2rem', fontWeight: 600, padding: '4px 0' }}>
-              {t('navTrack')}
+            <a 
+              href="#track" 
+              onClick={() => handleNav('track')} 
+              style={{ 
+                fontSize: '1.1rem', 
+                fontWeight: 600, 
+                padding: '12px 16px', 
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                backgroundColor: currentTab === 'track' ? 'var(--chilli-red-light)' : 'transparent',
+                color: currentTab === 'track' ? 'var(--chilli-red)' : 'var(--text-dark)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Package size={20} />
+              <span>{t('navTrack')}</span>
             </a>
           )}
           {user && user.role === 'ADMIN' && (
-            <a href="#admin" onClick={() => handleNav('admin')} style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--spice-gold-hover)', padding: '4px 0' }}>
-              {t('navAdmin')}
+            <a 
+              href="#admin" 
+              onClick={() => handleNav('admin')} 
+              style={{ 
+                fontSize: '1.1rem', 
+                fontWeight: 600, 
+                padding: '12px 16px', 
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                backgroundColor: currentTab === 'admin' ? 'var(--spice-gold-light)' : 'transparent',
+                color: currentTab === 'admin' ? 'var(--spice-gold-hover)' : 'var(--text-dark)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <ShieldAlert size={20} />
+              <span>{t('navAdmin')}</span>
             </a>
           )}
 
@@ -400,12 +465,29 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
 
       {/* Media query styling in line blocks */}
       <style>{`
+        :root {
+          --header-height: 80px;
+        }
         @media (max-width: 768px) {
+          :root {
+            --header-height: 64px;
+          }
           .desktop-only {
             display: none !important;
           }
           .mobile-toggle {
             display: block !important;
+          }
+          .logo-text {
+            font-size: 1.4rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .logo-text {
+            font-size: 1.25rem !important;
+          }
+          .premium-badge {
+            display: none !important;
           }
         }
       `}</style>
