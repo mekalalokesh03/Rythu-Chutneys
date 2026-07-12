@@ -40,7 +40,8 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
   };
 
   return (
-    <header className="header-glass" style={{ display: 'flex', alignItems: 'center' }}>
+    <>
+      <header className="header-glass" style={{ display: 'flex', alignItems: 'center' }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
         {/* Brand Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => handleNav('home')}>
@@ -255,6 +256,36 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
         </div>
       </div>
 
+      {/* Media query styling in line blocks */}
+      <style>{`
+        :root {
+          --header-height: 80px;
+        }
+        @media (max-width: 768px) {
+          :root {
+            --header-height: 64px;
+          }
+          .desktop-only {
+            display: none !important;
+          }
+          .mobile-toggle {
+            display: block !important;
+          }
+          .logo-text {
+            font-size: 1.4rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .logo-text {
+            font-size: 1.25rem !important;
+          }
+          .premium-badge {
+            display: none !important;
+          }
+        }
+      `}</style>
+    </header>
+
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div style={{
@@ -462,35 +493,6 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, setCurrentTab, openA
           )}
         </div>
       )}
-
-      {/* Media query styling in line blocks */}
-      <style>{`
-        :root {
-          --header-height: 80px;
-        }
-        @media (max-width: 768px) {
-          :root {
-            --header-height: 64px;
-          }
-          .desktop-only {
-            display: none !important;
-          }
-          .mobile-toggle {
-            display: block !important;
-          }
-          .logo-text {
-            font-size: 1.4rem !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .logo-text {
-            font-size: 1.25rem !important;
-          }
-          .premium-badge {
-            display: none !important;
-          }
-        }
-      `}</style>
-    </header>
+    </>
   );
 };
